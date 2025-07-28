@@ -23,7 +23,7 @@ $result = $conn -> query ($sql);
 	  rel="stylesheet" href="../css/bootstrap.min.css"
 	/>
 	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/media.css">
+	<!-- <link rel="stylesheet" href="css/media.css"> -->
 </head>
 <body>
 	<section class="header" id="header">
@@ -77,7 +77,7 @@ $result = $conn -> query ($sql);
 <!--js link-->
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
-<script src="../js/script.js"></script>
+<script src="js/script.js"></script>
 <script src="../js/3b83a3096d.js"></script>
 
 </body>

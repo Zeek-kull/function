@@ -27,8 +27,8 @@ include 'lib/connection.php';
     <!-- Google Fonts for better typography -->
     <link href="../css/css2.css?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/home.css">
+    <!-- Custom CSS
+    <link rel="stylesheet" href="css/home.css"> -->
 
     <style>
         body {

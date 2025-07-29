@@ -5,12 +5,12 @@ if(isset($_SESSION['auth']))
 {
    if($_SESSION['auth']!=1)
    {
-       header("location:a_login.php");
+       header("location: a_login.php");
    }
 }
 else
 {
-   header("location:a_login.php");
+   header("location: a_login.php");
 }
  include'header.php';
  include'lib/connection.php';
@@ -62,6 +62,6 @@ else
   </tbody>
 </table>
 </div>
-    
+
 </body>
 </html>

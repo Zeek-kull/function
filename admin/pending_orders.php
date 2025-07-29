@@ -6,10 +6,10 @@ if (session_status() == PHP_SESSION_NONE) {
 
 if (isset($_SESSION['auth'])) {
     if ($_SESSION['auth'] != 1) {
-        header("location:a_login.php");
+        header("location: a_login.php");
     }
 } else {
-    header("location:a_login.php");
+    header("location: a_login.php");
 }
 
 include 'lib/connection.php';

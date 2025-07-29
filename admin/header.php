@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 // Check admin session, not user session
 if (!isset($_SESSION['admin_auth']) || $_SESSION['admin_auth'] != 1) {
-	header("Location: ../a_login.php");
+	header("Location: a_login.php");
 	exit;
 }
 include'lib/connection.php';
@@ -50,7 +50,7 @@ $result = $conn -> query ($sql);
 	<div class="sidenav" id="sidenav">
 		<ul class="navbar-nav">
 		   <li class="nav-item">
-				<a class="nav-link d" href="Home.php">Dashboard</a>
+				<a class="nav-link d" href="home.php">Dashboard</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link po" href="pending_orders.php">Order Status</a>
@@ -75,6 +75,7 @@ $result = $conn -> query ($sql);
 
 ?>
 <!--js link-->
+<script src="../js/jquery-3.6.0.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="js/script.js"></script>

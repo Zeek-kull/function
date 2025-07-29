@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Check admin session, not user session
 if (!isset($_SESSION['admin_auth']) || $_SESSION['admin_auth'] != 1) {
-    header("location:admin/a_login.php");
+    header("location:a_login.php");
     exit;
 }
 include 'lib/connection.php';
@@ -92,16 +92,14 @@ include 'lib/connection.php';
                     <h3>Manage your platform with ease and efficiency.</h3>
                     <p class="mt-4">Here you can manage orders, products, users, and much more. Make sure everything is
                         up-to-date!</p>
-                   
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS and Popper.js -->
-    <script src="../js/jquery-3.5.1.slim.min.js"></script>
-    <script src="../js/popper.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
 </body>
 
 </html>

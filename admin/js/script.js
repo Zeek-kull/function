@@ -5,3 +5,7 @@ function openside() {
     document.getElementById("sidenav").style.width = "0px";
   }
 }
+
+function closeside() {
+  document.getElementById("sidenav").style.width = "0px";
+}

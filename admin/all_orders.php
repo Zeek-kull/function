@@ -4,12 +4,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-if (isset($_SESSION['auth'])) {
-    if ($_SESSION['auth'] != 1) {
-        header("location: a_login.php");
+if (isset($_SESSION['admin_auth'])) {
+    if ($_SESSION['admin_auth'] != 1) {
+        header("location:a_login.php");
     }
 } else {
-    header("location: a_login.php");
+    header("location:a_login.php");
 }
 include 'lib/connection.php';
 

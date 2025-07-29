@@ -7,7 +7,7 @@ if (!isset($_SESSION['admin_auth']) || $_SESSION['admin_auth'] != 1) {
 	header("Location: a_login.php");
 	exit;
 }
-include'lib/connection.php';
+include 'lib/connection.php';
 $sql = "SELECT * FROM orders where status='pending'";
 $result = $conn -> query ($sql);
 ?>
@@ -47,7 +47,7 @@ $result = $conn -> query ($sql);
 		<a href="a_logout.php">(logout)</a>
 	</section>
 
-	<div class="sidenav" id="sidenav">
+	<div class="sidenav" id="sidenav" onmouseleave="closeside()" >
 		<ul class="navbar-nav">
 		   <li class="nav-item">
 				<a class="nav-link d" href="home.php">Dashboard</a>

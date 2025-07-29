@@ -2,19 +2,19 @@
 
 SESSION_START();
 
-if(isset($_SESSION['auth']))
+if(isset($_SESSION['admin_auth']))
 {
-   if($_SESSION['auth']!=1)
+   if($_SESSION['admin_auth']!=1)
    {
-       header("location: a_login.php");
+       header("location:a_login.php");
    }
 }
 else
 {
-   header("location: a_login.php");
+   header("location:a_login.php");
 }
- include'header.php';
- include'lib/connection.php';
+ include 'header.php';
+ include 'lib/connection.php';
  $result=null;
 if (isset($_POST['submit'])) 
 {

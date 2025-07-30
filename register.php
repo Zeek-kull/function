@@ -179,7 +179,7 @@ if (isset($_POST['u_submit'])) {
     </div>
     <!-- Bootstrap JS -->
     <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/ph-address-selector.js"></script>
     <script>
         document.querySelector('form').addEventListener('submit', function(e) {

@@ -8,51 +8,75 @@ if (isset($_POST['u_submit'])) {
     $f_name = $_POST['u_name'];
     $l_name = $_POST['l_name'];
     $email = $_POST['email'];
-    $pass = md5($_POST['pass']);
-    $cpass = md5($_POST['c_pass']);
+    $raw_pass = $_POST['pass'];
+    $raw_cpass = $_POST['c_pass'];
+    $region = $_POST['region_text'];
+    $province = $_POST['province_text'];
+    $city = $_POST['city_text'];
+    $barangay = $_POST['barangay_text'];
+    $street = $_POST['street'];
+    $zone = isset($_POST['zone']) ? $_POST['zone'] : NULL;
 
-    // Check if email already exists
-    $email_check_sql = "SELECT email FROM users WHERE email = ?";
-    if ($stmt_check = $conn->prepare($email_check_sql)) {
-        $stmt_check->bind_param("s", $email);
-        $stmt_check->execute();
-        $stmt_check->store_result();
+    // Password strength check
+    $pass_error = null;
+    if (
+        strlen($raw_pass) < 8 ||
+        !preg_match('/[A-Z]/', $raw_pass) ||      // at least one uppercase
+        !preg_match('/[a-z]/', $raw_pass) ||      // at least one lowercase
+        !preg_match('/[0-9]/', $raw_pass) ||      // at least one digit
+        !preg_match('/[\W_]/', $raw_pass)         // at least one special char
+    ) {
+        $pass_error = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+    }
 
-        if ($stmt_check->num_rows > 0) {
-            $email_error = "Email is already taken.";
-        } else {
-            // Proceed if the email is available
-            if ($pass == $cpass) {
-                // Prepared statement to avoid SQL Injection
-                $insertSql = "INSERT INTO users (f_name, l_name, email, pass) VALUES (?, ?, ?, ?)";
-    
-                if ($stmt = $conn->prepare($insertSql)) {
-                    $stmt->bind_param("ssss", $f_name, $l_name, $email, $pass);
-    
-                    if ($stmt->execute()) {
-                        $result = "Account Open success";
-                        header("location: login.php");
-                    } else {
-                        $result = "Error: " . $stmt->error;
-                    }
-                    $stmt->close();
-                } else {
-                    $result = "Error preparing statement: " . $conn->error;
-                }
-            } else {
-                $result = "Password Not Match";
-            }
-        }
-        $stmt_check->close();
+    if ($pass_error) {
+        $result = $pass_error;
     } else {
-        $result = "Error checking email: " . $conn->error;
+        $pass = md5($raw_pass);
+        $cpass = md5($raw_cpass);
+
+        // Check if email already exists
+        $email_check_sql = "SELECT email FROM users WHERE email = ?";
+        if ($stmt_check = $conn->prepare($email_check_sql)) {
+            $stmt_check->bind_param("s", $email);
+            $stmt_check->execute();
+            $stmt_check->store_result();
+
+            if ($stmt_check->num_rows > 0) {
+                $email_error = "Email is already taken.";
+            } else {
+                // Proceed if the email is available
+                if ($pass == $cpass) {
+                    // Prepared statement to avoid SQL Injection
+                    $insertSql = "INSERT INTO users (f_name, l_name, email, pass, region, province, city, barangay, street, zone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                    if ($stmt = $conn->prepare($insertSql)) {
+                        $stmt->bind_param("ssssssssss", $f_name, $l_name, $email, $pass, $region, $province, $city, $barangay, $street, $zone);
+
+                        if ($stmt->execute()) {
+                            $result = "Account Open success";
+                            header("location: login.php");
+                        } else {
+                            $result = "Error: " . $stmt->error;
+                        }
+                        $stmt->close();
+                    } else {
+                        $result = "Error preparing statement: " . $conn->error;
+                    }
+                } else {
+                    $result = "Password Not Match";
+                }
+            }
+            $stmt_check->close();
+        } else {
+            $result = "Error checking email: " . $conn->error;
+        }
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,26 +84,17 @@ if (isset($_POST['u_submit'])) {
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Create Account</title>
-
     <!-- Bootstrap CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <style>
-        .bg-gradient-primary {
-            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
-            color: white;
-        }
-
         .card {
             border-radius: 15px;
         }
     </style>
 </head>
-
 <body class="bg-gradient-primary">
-
     <div class="container">
-
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <div class="card o-hidden border-0 shadow-lg my-5">
                 <div class="card-body p-0">
@@ -96,33 +111,62 @@ if (isset($_POST['u_submit'])) {
                                         echo "<div class='alert alert-danger'>$email_error</div>";
                                     } ?>
                                 </div>
-
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <label for="fname">Name</label>
                                         <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" name="u_name" required>
                                     </div>
                                     <div class="col-sm-6">
+                                        <label for="lname">Last Name</label>
                                         <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" name="l_name" required>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
+                                    <label for="street">Street Number/House Number</label>
+                                    <input type="text" class="form-control" id="street" name="street" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="zone">Zone (optional)</label>
+                                    <input type="text" class="form-control" id="zone" name="zone">
+                                </div>
+                                <!-- Philippine Address Dropdowns START -->
+                                <div class="form-group">
+                                    <label for="region">Region</label>
+                                    <select id="region" class="form-control" required></select>
+                                    <input type="hidden" name="region_text" id="region-text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="province">Province</label>
+                                    <select id="province" class="form-control" required></select>
+                                    <input type="hidden" name="province_text" id="province-text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City/Municipality</label>
+                                    <select id="city" class="form-control" required></select>
+                                    <input type="hidden" name="city_text" id="city-text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="barangay">Barangay</label>
+                                    <select id="barangay" class="form-control" required></select>
+                                    <input type="hidden" name="barangay_text" id="barangay-text">
+                                </div>
+                                <!-- Philippine Address Dropdowns END -->
+                                <div class="form-group">
+                                    <label for="email">Email</label>
                                     <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email" required>
                                 </div>
-
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <label for="pass">Password</label>
                                         <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" name="pass" required>
                                     </div>
                                     <div class="col-sm-6">
+                                        <label for="c_pass">Confirm Password</label>
                                         <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" name="c_pass" required>
                                     </div>
                                 </div>
-
                                 <button type="submit" class="btn btn-primary btn-user btn-block" name="u_submit">Register Account</button>
-
                                 <hr>
-
                                 <div class="text-center">
                                     <a class="small" href="login.php">Already have an account? Login!</a>
                                 </div>
@@ -132,12 +176,32 @@ if (isset($_POST['u_submit'])) {
                 </div>
             </div>
         </form>
-
     </div>
-
     <!-- Bootstrap JS -->
-    <script src="js/jquery-3.5.1.slim.min.js"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/ph-address-selector.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            var pass = document.getElementById('exampleInputPassword').value;
+            var cpass = document.getElementById('exampleRepeatPassword').value;
+            var error = "";
+            if (
+                pass.length < 8 ||
+                !/[A-Z]/.test(pass) ||
+                !/[a-z]/.test(pass) ||
+                !/[0-9]/.test(pass) ||
+                !/[\W_]/.test(pass)
+            ) {
+                error = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+            } else if (pass !== cpass) {
+                error = "Passwords do not match.";
+            }
+            if (error) {
+                alert(error);
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
-
 </html>

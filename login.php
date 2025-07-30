@@ -57,19 +57,15 @@ if (isset($_POST['submit'])) {
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .btn-primary {
-            background-color: #6a11cb;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #2575fc;
+        .bg-gradient-primary {
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
         }
         .form-control {
             border-radius: 5px;
             box-shadow: none;
         }
         .text-center a {
-            color: #6a11cb;
+            color: #2575fc;
         }
         .alert-danger {
             background-color: #f8d7da;

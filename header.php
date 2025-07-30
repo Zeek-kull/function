@@ -68,7 +68,7 @@
                 <li class="nav-item"><a class="nav-link" href="Clothing.php">Clothing</a></li>
                 <li class="nav-item"><a class="nav-link" href="Trends.php"></a></li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" action="search(1).php" method="post">
+            <form class="form-inline my-2 my-lg-0" action="search.php" method="post">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="name">
                 <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
                     <img src="img/search.png" alt="Search">
@@ -77,7 +77,7 @@
 
             <!-- Show Cart icon only if the user is logged in -->
             <?php if (isset($_SESSION['userid'])): ?>
-                <a class="btn btn-outline-dark ml-3" href="cart(1).php">
+                <a class="btn btn-outline-dark ml-3" href="cart.php">
                     <img src="img/cart.png" alt="Cart" style="width: 20px;"> 
                     <span class="badge badge-pill badge-secondary"><?php echo $total; ?></span>
                 </a>

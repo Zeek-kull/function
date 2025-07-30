@@ -9,6 +9,15 @@
   }
 
   // Order handling
+  // Get user's latest address from orders table
+  $latest_address = '';
+  $user_id_for_address = isset($_SESSION['userid']) ? $_SESSION['userid'] : '';
+  if ($user_id_for_address) {
+      $address_query = mysqli_query($conn, "SELECT address FROM orders WHERE userid='$user_id_for_address' ORDER BY id DESC LIMIT 1");
+      if ($address_query && mysqli_num_rows($address_query) > 0) {
+          $latest_address = mysqli_fetch_assoc($address_query)['address'];
+      }
+  }
   if (isset($_POST['order_btn'])) {
       $userid = $_POST['user_id'];
       $name = $_POST['user_name'];
@@ -17,7 +26,7 @@
       $mobnumber = isset($_POST['mobnumber']) ? $_POST['mobnumber'] : '';
       $payment_method = $_POST['payment_method']; // User-selected payment method
       $status = "pending";
-      $created_at = date('Y-m-d H:i:s'); // Current date and time
+      $order_date = date('Y-m-d H:i:s'); // Current date and time
 
       $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE userid='$userid'");
       $price_total = 0;
@@ -27,7 +36,7 @@
       if (mysqli_num_rows($cart_query) > 0) {
           while ($product_item = mysqli_fetch_assoc($cart_query)) {
               $product_name[] = $product_item['productid'] . ' (' . $product_item['quantity'] . ')';
-              $product_price = (float)$product_item['price'] * (int)$product_item['quantity'];
+              $product_price = number_format($product_item['price'] * $product_item['quantity']);
               $price_total += $product_price;
 
               // Update product stock
@@ -47,8 +56,9 @@
 
           // Insert order if products are available
           $total_product = implode(', ', $product_name);
+          // Use only the correct column 'created_at' for the order date
           $detail_query = mysqli_query($conn, "INSERT INTO `orders`(userid, name, address, phone, mobnumber, payment_method, totalproduct, totalprice, status, created_at) 
-              VALUES('$userid','$name','$address','$number','$mobnumber','$payment_method','$total_product','$price_total','$status', '$created_at')");
+              VALUES('$userid','$name','$address','$number','$mobnumber','$payment_method','$total_product','$price_total','$status', '$order_date')");
 
           // Empty cart after successful order
           $cart_query1 = mysqli_query($conn, "DELETE FROM `cart` WHERE userid='$userid'");
@@ -66,7 +76,7 @@
   if (isset($_POST['update_update_btn'])) {
       $update_value = $_POST['update_quantity'];
       $update_id = $_POST['update_quantity_id'];
-      $update_quantity_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$update_value' WHERE id = '$update_id'");
+      $update_quantity_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$update_value' WHERE c_id = '$update_id'");
       if ($update_quantity_query) {
           header('location:cart.php');
           exit();
@@ -104,14 +114,14 @@
         <td><?php echo $row["name"]; ?></td>
         <td>
           <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-            <input type="hidden" name="update_quantity_id" value="<?php echo $row['id']; ?>">
+            <input type="hidden" name="update_quantity_id" value="<?php echo $row['c_id']; ?>">
             <input type="number" name="update_quantity" min="1" value="<?php echo $row['quantity']; ?>" class="form-control w-50 d-inline">
             <input type="submit" value="Update" name="update_update_btn" class="btn btn-info btn-sm ml-2">
           </form>
         </td>
         <td><?php echo number_format($row["price"] * $row["quantity"], 2); ?></td>
         <?php $total += $row["price"] * $row["quantity"]; ?>
-        <td><a href="cart.php?remove=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm">Remove</a></td>
+        <td><a href="cart.php?remove=<?php echo $row['c_id']; ?>" class="btn btn-danger btn-sm">Remove</a></td>
       </tr>
       <?php
             }
@@ -132,10 +142,15 @@
     <input type="hidden" name="user_name" value="<?php echo $_SESSION['username']; ?>">
 
     <div class="form-group">
-      <input type="text" class="form-control" name="address" placeholder="Shipping Address" required>
+      <div class="input-group">
+        <input type="text" class="form-control" name="address" id="addressInput" placeholder="Shipping Address" value="<?php echo htmlspecialchars($latest_address); ?>" required <?php echo empty($latest_address) ? '' : 'readonly'; ?>>
+        <div class="input-group-append">
+          <button type="button" class="btn btn-secondary" id="editAddressBtn" <?php echo empty($latest_address) ? 'style="display:none;"' : ''; ?>>Edit</button>
+        </div>
+      </div>
     </div>
     <div class="form-group">
-      <input type="number" class="form-control" name="number" placeholder="Phone Number" required>
+      <input type="text" class="form-control" name="mobnumber" placeholder="Phone Number" pattern="[0-9]{7,15}" required>
     </div>
     <div class="form-group">
       <select name="payment_method" id="payment_method" class="form-control" required>
@@ -186,12 +201,21 @@
 
 <!-- JavaScript for Form Validation -->
 <script>
+  // Redirect to profile.php when Edit button is clicked
+  document.getElementById('editAddressBtn')?.addEventListener('click', function () {
+    window.location.href = 'profile.php';
+  });
+</script>
+<script>
   document.getElementById('orderForm').addEventListener('input', function () {
       var address = document.querySelector('input[name="address"]').value;
-      var number = document.querySelector('input[name="number"]').value;
+      var mobnumber = document.querySelector('input[name="mobnumber"]').value;
       var payment_method = document.querySelector('select[name="payment_method"]').value;
 
-      if (address && number && payment_method) {
+      // Validate phone number pattern
+      var phoneValid = /^[0-9]{7,15}$/.test(mobnumber);
+
+      if (address && mobnumber && payment_method && phoneValid) {
           document.getElementById('orderButton').disabled = false;
           document.getElementById('orderButton').style.backgroundColor = '#2ecc71';  // Green
       } else {

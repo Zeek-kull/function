@@ -55,7 +55,7 @@ $result = $conn->query($sql);
     <form action="" method="post" class="form-inline">
       <label for="profile_new_address" class="mr-2"><h5>Address:</h5></label>
       <input type="text" name="profile_new_address" id="profile_new_address" value="<?php echo htmlspecialchars($order_address); ?>" class="form-control form-control-sm mr-2" style="width:220px;">
-      <button type="submit" name="update_profile_address_btn" class="btn btn-info btn-sm">Update Address</button>
+      <button type="submit" name="update_profile_address_btn" class="btn btn-info btn-sm">Edit Address</button>
     </form>
   </div>
   <h5>My Orders</h5>
@@ -135,6 +135,7 @@ $result = $conn->query($sql);
               <td><?php echo htmlspecialchars($row["payment_method"]); ?></td>
               <td><?php echo htmlspecialchars($row["status"]); ?></td>
               <td>
+
                 <?php
                   // Simple order tracking status
                   if ($row["status"] == "Pending") {

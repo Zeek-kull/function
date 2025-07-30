@@ -47,7 +47,7 @@ $result = $conn -> query ($sql);
 		<a href="a_logout.php">(logout)</a>
 	</section>
 
-	<div class="sidenav" id="sidenav" onmouseleave="closeside()" >
+	<div class="sidenav" onmouseleave="closeside()" id="sidenav"  >
 		<ul class="navbar-nav">
 		   <li class="nav-item">
 				<a class="nav-link d" href="home.php">Dashboard</a>

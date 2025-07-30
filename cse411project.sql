@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2025 at 01:40 PM
+-- Generation Time: Jul 30, 2025 at 04:07 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,7 @@ INSERT INTO `admin` (`id`, `userid`, `pass`) VALUES
 CREATE TABLE `cart` (
   `c_id` int(100) NOT NULL,
   `userid` int(100) NOT NULL,
-  `productid` int(100) NOT NULL,
+  `productid` int(100) DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `quantity` int(100) NOT NULL,
   `price` int(100) NOT NULL
@@ -66,7 +66,8 @@ INSERT INTO `cart` (`c_id`, `userid`, `productid`, `name`, `quantity`, `price`) 
 (24, 4, 12, 'T-shirt', 1, 350),
 (74, 0, 13, 'Shirt', 2, 400),
 (78, 0, 17, 'asdasd', 1, 1221),
-(79, 0, 0, 'New Shirt', 1, 600);
+(79, 0, 0, 'New Shirt', 1, 600),
+(91, 12, 14, 'New Shirt', 1, 600);
 
 -- --------------------------------------------------------
 
@@ -89,6 +90,14 @@ CREATE TABLE `orders` (
   `created_at` timestamp(6) NOT NULL DEFAULT current_timestamp(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `userid`, `name`, `address`, `phone`, `mobnumber`, `payment_method`, `txid`, `totalproduct`, `totalprice`, `status`, `created_at`) VALUES
+(34, 9, 'William Ken', '1329, Zone 6, Cansinala, Apalit, Pampanga', 0, '09270415710', 'PayPal', '', '12 (1)', 350, 'pending', '2025-07-30 07:19:58.000000'),
+(35, 9, 'William Ken', '1329, Zone 6, Cansinala, Apalit, Pampanga', 0, '09270415710', 'PayPal', '', '18 (2)', 426, 'pending', '2025-07-30 07:20:22.000000');
+
 -- --------------------------------------------------------
 
 --
@@ -110,11 +119,11 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`p_id`, `name`, `catagory`, `description`, `quantity`, `Price`, `imgname`) VALUES
-(12, 'Tshirt', 'clothing', 'good', 9, 350, 'g3.png'),
+(12, 'Tshirt', 'clothing', 'good', 8, 350, 'g3.png'),
 (13, 'Shirt', 'clothing', 'good', 23, 400, 'g2.png'),
 (14, 'New Shirt', 'clothing', 'good', 54, 600, 'g1.png'),
 (17, 'asdasd', 'asdad', 'asdasd', 1, 1221, 'men-s-running-t-shirt-red-decathlon-8771124.avif'),
-(18, 'asdasdasd', 'asdasd', 'asda', 22, 213, 'ethics.PNG');
+(18, 'asdasdasd', 'asdasd', 'asda', 20, 213, 'ethics.PNG');
 
 -- --------------------------------------------------------
 
@@ -142,7 +151,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `f_name`, `l_name`, `email`, `phone`, `pass`, `zone`, `street`, `barangay`, `city`, `province`, `region`) VALUES
-(8, 'William Ken', 'Emperado', 'wemperado004@gmail.com', '09270415710', 'af6fa088505623cec26868adcc4767f6', '6', '892 sahdadhadhah', 'Cansinala', 'Apalit', 'Pampanga', 'Region III (Central Luzon)');
+(9, 'William Ken', 'Emperado', 'wemperado004@gmail.com', '09270415710', 'af6fa088505623cec26868adcc4767f6', '6', '1329', 'Cansinala', 'Apalit', 'Pampanga', 'Region III (Central Luzon)');
 
 --
 -- Indexes for dumped tables
@@ -192,13 +201,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `c_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `c_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `product`
@@ -210,7 +219,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

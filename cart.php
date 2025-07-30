@@ -31,6 +31,16 @@
       }
   }
   if (isset($_POST['order_btn'])) {
+      // Check if cart is empty
+      $cart_check = mysqli_query($conn, "SELECT COUNT(*) as cart_count FROM cart WHERE userid = '{$_SESSION['userid']}'");
+      $cart_count = mysqli_fetch_assoc($cart_check)['cart_count'];
+      
+      if ($cart_count == 0) {
+          echo "<script>alert('Your cart is empty. Please add items before placing an order.');</script>";
+          header("location:cart.php");
+          exit();
+      }
+      
       $userid = $_POST['user_id'];
       $name = $_POST['user_name'];
       $number = $_POST['number'];
@@ -210,12 +220,9 @@
 
 <!-- JavaScript for Form Validation -->
 <script>
-  // Redirect to profile.php when Edit button is clicked
-  document.getElementById('editAddressBtn')?.addEventListener('click', function () {
-    window.location.href = 'profile.php';
-  });
-</script>
-<script>
+  // Check if cart has items
+  var cartItems = <?php echo mysqli_num_rows($result); ?>;
+  
   document.getElementById('orderForm').addEventListener('input', function () {
       var address = document.querySelector('input[name="address"]').value;
       var mobnumber = document.querySelector('input[name="mobnumber"]').value;
@@ -224,7 +231,8 @@
       // Validate phone number pattern
       var phoneValid = /^[0-9]{11}$/.test(mobnumber);
 
-      if (address && mobnumber && payment_method && phoneValid) {
+      // Check if cart has items AND form is valid
+      if (cartItems > 0 && address && mobnumber && payment_method && phoneValid) {
           document.getElementById('orderButton').disabled = false;
           document.getElementById('orderButton').style.backgroundColor = '#2ecc71';  // Green
       } else {
@@ -232,4 +240,11 @@
           document.getElementById('orderButton').style.backgroundColor = '#ddd'; // Disabled gray
       }
   });
+  
+  // Initial check on page load
+  if (cartItems == 0) {
+      document.getElementById('orderButton').disabled = true;
+      document.getElementById('orderButton').style.backgroundColor = '#ddd';
+      document.getElementById('orderButton').textContent = 'Cart is Empty';
+  }
 </script>

@@ -24,7 +24,7 @@ else
   $quantity = $_POST['update_quantity'];
   $price = $_POST['update_Price'];
   $update_id = $_POST['update_id'];
-  $update_quantity_query = mysqli_query($conn, "UPDATE `product` SET quantity = '$quantity' , name='$name' , catagory='$catagory' ,price='$price'  WHERE id = '$update_id'");
+  $update_quantity_query = mysqli_query($conn, "UPDATE `product` SET quantity = '$quantity' , name='$name' , catagory='$catagory' ,price='$price'  WHERE p_id = '$update_id'");
   if($update_quantity_query){
      header('location:all_product.php');
   };
@@ -32,7 +32,7 @@ else
 
  if(isset($_GET['remove'])){
   $remove_id = $_GET['remove'];
-  mysqli_query($conn, "DELETE FROM `product` WHERE id = '$remove_id'");
+  mysqli_query($conn, "DELETE FROM `product` WHERE p_id = '$remove_id'");
   header('location:all_product.php');
 };
 ?>
@@ -71,7 +71,7 @@ else
     <tr>
       <td><img src="product_img/<?php echo $row['imgname']; ?>" style="width:50px;"></td>
      <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-        <input type="hidden" name="update_id"  value="<?php echo  $row['id']; ?>" >
+        <input type="hidden" name="update_id"  value="<?php echo  $row['p_id']; ?>" >
         <td><input type="text" name="update_name"  value="<?php echo $row['name']; ?>" ></td>
         <td><input type="text" name="update_catagory"  value="<?php echo $row['catagory']; ?>" ></td>
 
@@ -79,7 +79,7 @@ else
         <td> <input type="number" name="update_Price" value="<?php echo $row['Price']; ?>" ></td>
         <td> <input type="submit" value="update" name="update_update_btn">
       </form></td>
-      <td><a href="all_product.php?remove=<?php echo $row['id']; ?>">remove</a></td>
+      <td><a href="all_product.php?remove=<?php echo $row['p_id']; ?>">remove</a></td>
     </tr>
     <?php 
     }

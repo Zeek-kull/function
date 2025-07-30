@@ -40,13 +40,13 @@
               $price_total += $product_price;
 
               // Update product stock
-              $sql = "SELECT * FROM product WHERE id = '{$product_item['productid']}'";
+              $sql = "SELECT * FROM product WHERE p_id = '{$product_item['productid']}'";
               $result = $conn->query($sql);
               if (mysqli_num_rows($result) > 0) {
                   while ($row = mysqli_fetch_assoc($result)) {
                       if ($product_item['quantity'] <= $row['quantity']) {
                           $update_quantity = $row['quantity'] - $product_item['quantity'];
-                          $update_query = mysqli_query($conn, "UPDATE `product` SET quantity = '$update_quantity' WHERE id = '{$row['id']}'");
+                          $update_query = mysqli_query($conn, "UPDATE `product` SET quantity = '$update_quantity' WHERE p_id = '{$row['p_id']}'");
                       } else {
                           echo "Out of stock: " . $row['name'] . " Quantity: " . $row['quantity'];
                       }

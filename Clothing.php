@@ -60,7 +60,7 @@ if (isset($_POST['add_to_cart'])) {
                             <div>
                                 <h6><?php echo $row["name"]; ?></h6>
                                 <span><?php echo number_format($row["Price"], 2); ?></span> <!-- Remove the dollar sign -->
-                                <input type="hidden" name="product_id" value="<?php echo $row['id']; ?>">
+                                <input type="hidden" name="product_id" value="<?php echo $row['p_id']; ?>">
                                 <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
                                 <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">
 

@@ -16,6 +16,16 @@ if (isset($_POST['u_submit'])) {
     $barangay = $_POST['barangay_text'];
     $street = $_POST['street'];
     $zone = isset($_POST['zone']) ? $_POST['zone'] : NULL;
+    $phone = $_POST['phone'];
+
+    // Phone number validation for Philippines
+    $phone_error = null;
+    $phone = preg_replace('/[^0-9]/', '', $phone); // Remove non-numeric characters
+    if (strlen($phone) < 10 || strlen($phone) > 11) {
+        $phone_error = "Phone number must be 10-11 digits (e.g., 09123456789 or 9123456789)";
+    } elseif (!preg_match('/^(09|\+639|639|9)\d{9}$/', $phone)) {
+        $phone_error = "Invalid Philippine phone number format. Use format: 09123456789";
+    }
 
     // Password strength check
     $pass_error = null;
@@ -29,8 +39,8 @@ if (isset($_POST['u_submit'])) {
         $pass_error = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
     }
 
-    if ($pass_error) {
-        $result = $pass_error;
+    if ($pass_error || $phone_error) {
+        $result = $pass_error ? $pass_error : $phone_error;
     } else {
         $pass = md5($raw_pass);
         $cpass = md5($raw_cpass);
@@ -48,10 +58,10 @@ if (isset($_POST['u_submit'])) {
                 // Proceed if the email is available
                 if ($pass == $cpass) {
                     // Prepared statement to avoid SQL Injection
-                    $insertSql = "INSERT INTO users (f_name, l_name, email, pass, region, province, city, barangay, street, zone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $insertSql = "INSERT INTO users (f_name, l_name, email, pass, region, province, city, barangay, street, zone, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                     if ($stmt = $conn->prepare($insertSql)) {
-                        $stmt->bind_param("ssssssssss", $f_name, $l_name, $email, $pass, $region, $province, $city, $barangay, $street, $zone);
+                        $stmt->bind_param("sssssssssss", $f_name, $l_name, $email, $pass, $region, $province, $city, $barangay, $street, $zone, $phone);
 
                         if ($stmt->execute()) {
                             $result = "Account Open success";
@@ -113,7 +123,7 @@ if (isset($_POST['u_submit'])) {
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <label for="fname">Name</label>
+                                        <label for="fname">First Name</label>
                                         <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" name="u_name" required>
                                     </div>
                                     <div class="col-sm-6">
@@ -126,7 +136,7 @@ if (isset($_POST['u_submit'])) {
                                     <input type="text" class="form-control" id="street" name="street" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="zone">Zone (optional)</label>
+                                    <label for="zone">Zone/Block (optional)</label>
                                     <input type="text" class="form-control" id="zone" name="zone">
                                 </div>
                                 <!-- Philippine Address Dropdowns START -->
@@ -154,6 +164,11 @@ if (isset($_POST['u_submit'])) {
                                 <div class="form-group">
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" class="form-control form-control-user" id="phone" placeholder="09123456789" name="phone" pattern="[0-9]{11}" maxlength="11" required>
+                                    <small class="form-text text-muted">Format: 09123456789 (11 digits starting with 09)</small>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
@@ -185,22 +200,47 @@ if (isset($_POST['u_submit'])) {
         document.querySelector('form').addEventListener('submit', function(e) {
             var pass = document.getElementById('exampleInputPassword').value;
             var cpass = document.getElementById('exampleRepeatPassword').value;
+            var phone = document.getElementById('phone').value;
             var error = "";
-            if (
-                pass.length < 8 ||
-                !/[A-Z]/.test(pass) ||
-                !/[a-z]/.test(pass) ||
-                !/[0-9]/.test(pass) ||
-                !/[\W_]/.test(pass)
-            ) {
-                error = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
-            } else if (pass !== cpass) {
-                error = "Passwords do not match.";
+
+            // Phone number validation
+            var phoneClean = phone.replace(/[^0-9]/g, '');
+            if (phoneClean.length !== 11) {
+                error = "Phone number must be exactly 11 digits.";
+            } else if (!phoneClean.startsWith('09')) {
+                error = "Phone number must start with '09'.";
+            } else if (!/^09\d{9}$/.test(phoneClean)) {
+                error = "Invalid phone number format. Use: 09123456789";
             }
+
+            // Password validation
+            if (!error) {
+                if (
+                    pass.length < 8 ||
+                    !/[A-Z]/.test(pass) ||
+                    !/[a-z]/.test(pass) ||
+                    !/[0-9]/.test(pass) ||
+                    !/[\W_]/.test(pass)
+                ) {
+                    error = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+                } else if (pass !== cpass) {
+                    error = "Passwords do not match.";
+                }
+            }
+
             if (error) {
                 alert(error);
                 e.preventDefault();
             }
+        });
+
+        // Real-time phone number formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            var value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            e.target.value = value;
         });
     </script>
 </body>

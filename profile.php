@@ -27,36 +27,29 @@ $result = $conn->query($sql);
 
 <div class="container pendingbody">
   <?php
-    // Get user info (without address)
-    $user_info = mysqli_query($conn, "SELECT f_name, l_name FROM users WHERE id='$k'");
+    // Get user info including address from users table
+    $user_info = mysqli_query($conn, "SELECT f_name, l_name, street, zone, province, city, barangay, phone FROM users WHERE id='$k'");
     $user_row = mysqli_fetch_assoc($user_info);
     $user_name = isset($user_row['f_name']) ? $user_row['f_name'] : (isset($_SESSION['username']) ? $_SESSION['username'] : '');
     $user_lname = isset($user_row['l_name']) ? $user_row['l_name'] : '';
-    // Get address from latest order
-    $address_row = mysqli_query($conn, "SELECT address FROM orders WHERE userid='$k' ORDER BY id DESC LIMIT 1");
-    $order_address = '';
-    if ($address_row && mysqli_num_rows($address_row) > 0) {
-      $order_address = mysqli_fetch_assoc($address_row)['address'];
-    }
-
-    // Handle address update
-    if (isset($_POST['update_profile_address_btn'])) {
-      $new_profile_address = mysqli_real_escape_string($conn, $_POST['profile_new_address']);
-      // Update address in all user's orders (or you can update only latest order)
-      mysqli_query($conn, "UPDATE orders SET address = '$new_profile_address' WHERE userid = '$k'");
-      // Optionally, update the address in users table if you have that column
-      // mysqli_query($conn, "UPDATE users SET address = '$new_profile_address' WHERE id = '$k'");
-      echo "<script>window.location.href='profile.php';</script>";
-      exit();
+    
+    // Build complete address from user data
+    $user_address = '';
+    if ($user_row) {
+        $address_parts = array();
+        if (!empty($user_row['street'])) $address_parts[] = $user_row['street'];
+        if (!empty($user_row['zone'])) $address_parts[] = 'Zone ' . $user_row['zone'];
+        if (!empty($user_row['barangay'])) $address_parts[] = $user_row['barangay'];
+        if (!empty($user_row['city'])) $address_parts[] = $user_row['city'];
+        if (!empty($user_row['province'])) $address_parts[] = $user_row['province'];
+        
+        $user_address = implode(', ', $address_parts);
     }
   ?>
   <div class="mb-3">
     <h4>Name: <?php echo htmlspecialchars($user_name . ' ' . $user_lname); ?></h4>
-    <form action="" method="post" class="form-inline">
-      <label for="profile_new_address" class="mr-2"><h5>Address:</h5></label>
-      <input type="text" name="profile_new_address" id="profile_new_address" value="<?php echo htmlspecialchars($order_address); ?>" class="form-control form-control-sm mr-2" style="width:220px;">
-      <button type="submit" name="update_profile_address_btn" class="btn btn-info btn-sm">Edit Address</button>
-    </form>
+    <h5>Phone: <?php echo htmlspecialchars($user_row['phone'] ?? 'N/A'); ?></h5>
+    <h5>Address: <?php echo htmlspecialchars($user_address); ?></h5>
   </div>
   <h5>My Orders</h5>
   <table class="table">
@@ -169,5 +162,5 @@ $result = $conn->query($sql);
 </html>
 
 <?php
-include 'footer.php';
+include 'footer/footer.php';
 ?>

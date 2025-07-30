@@ -136,7 +136,7 @@ if (isset($_POST['u_submit'])) {
                                     <input type="text" class="form-control" id="street" name="street" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="zone">Zone/Block (optional)</label>
+                                    <label for="zone">Zone (optional)</label>
                                     <input type="text" class="form-control" id="zone" name="zone">
                                 </div>
                                 <!-- Philippine Address Dropdowns START -->

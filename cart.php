@@ -9,13 +9,25 @@
   }
 
   // Order handling
-  // Get user's latest address from orders table
-  $latest_address = '';
+  // Get user's address and phone from users table
+  $user_address = '';
+  $user_phone = '';
   $user_id_for_address = isset($_SESSION['userid']) ? $_SESSION['userid'] : '';
   if ($user_id_for_address) {
-      $address_query = mysqli_query($conn, "SELECT address FROM orders WHERE userid='$user_id_for_address' ORDER BY id DESC LIMIT 1");
-      if ($address_query && mysqli_num_rows($address_query) > 0) {
-          $latest_address = mysqli_fetch_assoc($address_query)['address'];
+      $user_info_query = mysqli_query($conn, "SELECT street, zone, barangay, city, province, phone FROM users WHERE id='$user_id_for_address'");
+      if ($user_info_query && mysqli_num_rows($user_info_query) > 0) {
+          $user_data = mysqli_fetch_assoc($user_info_query);
+          
+          // Build complete address from user data
+          $address_parts = array();
+          if (!empty($user_data['street'])) $address_parts[] = $user_data['street'];
+          if (!empty($user_data['zone'])) $address_parts[] = 'Zone ' . $user_data['zone'];
+          if (!empty($user_data['barangay'])) $address_parts[] = $user_data['barangay'];
+          if (!empty($user_data['city'])) $address_parts[] = $user_data['city'];
+          if (!empty($user_data['province'])) $address_parts[] = $user_data['province'];
+          
+          $user_address = implode(', ', $address_parts);
+          $user_phone = $user_data['phone'];
       }
   }
   if (isset($_POST['order_btn'])) {
@@ -143,14 +155,11 @@
 
     <div class="form-group">
       <div class="input-group">
-        <input type="text" class="form-control" name="address" id="addressInput" placeholder="Shipping Address" value="<?php echo htmlspecialchars($latest_address); ?>" required <?php echo empty($latest_address) ? '' : 'readonly'; ?>>
-        <div class="input-group-append">
-          <button type="button" class="btn btn-secondary" id="editAddressBtn" <?php echo empty($latest_address) ? 'style="display:none;"' : ''; ?>>Edit</button>
-        </div>
+        <input type="text" class="form-control" name="address" id="addressInput" placeholder="Shipping Address" value="<?php echo htmlspecialchars($user_address); ?>" required <?php echo empty($user_address) ? '' : 'readonly'; ?>>
       </div>
     </div>
     <div class="form-group">
-      <input type="text" class="form-control" name="mobnumber" placeholder="Phone Number" pattern="[0-9]{7,15}" required>
+      <input type="text" class="form-control" name="mobnumber" placeholder="Phone Number" pattern="[0-9]{11}" maxlength="11" value="<?php echo htmlspecialchars($user_phone); ?>" required <?php echo empty($user_phone) ? '' : 'readonly'; ?>>
     </div>
     <div class="form-group">
       <select name="payment_method" id="payment_method" class="form-control" required>
@@ -213,7 +222,7 @@
       var payment_method = document.querySelector('select[name="payment_method"]').value;
 
       // Validate phone number pattern
-      var phoneValid = /^[0-9]{7,15}$/.test(mobnumber);
+      var phoneValid = /^[0-9]{11}$/.test(mobnumber);
 
       if (address && mobnumber && payment_method && phoneValid) {
           document.getElementById('orderButton').disabled = false;

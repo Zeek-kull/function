@@ -36,14 +36,20 @@
       // Check if the product is already in the cart
       $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE productid = '$product_id' AND userid = '$user_id'");
       if (mysqli_num_rows($select_cart) > 0) {
-        $message[] = 'Product already added to cart';
+        // Product exists, update quantity by adding new quantity
+        $cart_item = mysqli_fetch_assoc($select_cart);
+        $new_quantity = $cart_item['quantity'] + $product_quantity;
+        
+        // Update the existing cart item
+        $update_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$new_quantity' WHERE productid = '$product_id' AND userid = '$user_id'");
+        $message[] = 'Product quantity updated in cart';
       } else {
-        // Insert product into cart
+        // Product doesn't exist, insert new cart item
         $insert_product = mysqli_query($conn, "INSERT INTO `cart`(userid, productid, name, quantity, price) VALUES('$user_id', '$product_id', '$product_name', '$product_quantity', '$product_price')");
         $message[] = 'Product added to cart successfully';
-        header('Location: product_detail.php?id=' . $product_id);
-        exit();
       }
+      header('Location: product_detail.php?id=' . $product_id);
+      exit();
     } else {
       header("Location: login.php");
       exit();

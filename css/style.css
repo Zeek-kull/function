@@ -441,3 +441,18 @@ a.text-decoration-none .product-card:hover {
     height: 150px;
   }
 }
+
+/* Cart page image styling */
+.cart-product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .cart-product-image {
+    width: 60px;
+    height: 60px;
+  }
+}

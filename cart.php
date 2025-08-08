@@ -89,9 +89,12 @@
       }
   }
 
-  // Get user's cart
+  // Get user's cart with product images
   $id = $_SESSION['userid'];
-  $sql = "SELECT * FROM cart WHERE userid='$id'";
+  $sql = "SELECT cart.*, product.imgname 
+          FROM cart 
+          LEFT JOIN product ON cart.productid = product.p_id 
+          WHERE cart.userid='$id'";
   $result = $conn->query($sql);
 
   // Update cart quantity
@@ -108,7 +111,7 @@
   // Remove item from cart
   if (isset($_GET['remove'])) {
       $remove_id = $_GET['remove'];
-      mysqli_query($conn, "DELETE FROM `cart` WHERE id = '$remove_id'");
+      mysqli_query($conn, "DELETE FROM `cart` WHERE c_id = '$remove_id'");
       header('location:cart.php');
       exit();
   }
@@ -120,6 +123,7 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
+        <th>Image</th>
         <th>Name</th>
         <th>Quantity</th>
         <th>Price</th>
@@ -133,6 +137,13 @@
             while ($row = mysqli_fetch_assoc($result)) {
       ?>
       <tr>
+        <td>
+          <?php if (!empty($row['imgname'])): ?>
+            <img src="admin/product_img/<?php echo $row['imgname']; ?>" alt="<?php echo $row["name"]; ?>" class="cart-product-image">
+          <?php else: ?>
+            <img src="img/no-image.png" alt="No Image" class="cart-product-image">
+          <?php endif; ?>
+        </td>
         <td><?php echo $row["name"]; ?></td>
         <td>
           <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
@@ -148,14 +159,24 @@
       <?php
             }
         } else {
-            echo "<tr><td colspan='4' class='text-center'>No Products in the Cart</td></tr>";
+            echo "<tr><td colspan='5' class='text-center'>No Products in the Cart</td></tr>";
         }
       ?>
     </tbody>
   </table>
 
   <div class="text-right my-4">
-    <h4>Total Amount: <span class="text-danger"><?php echo number_format($total, 2); ?> </span></h4>
+    <?php
+      // Calculate total quantity
+      $total_quantity = 0;
+      $result_copy = $conn->query($sql);
+      if (mysqli_num_rows($result_copy) > 0) {
+          while ($row = mysqli_fetch_assoc($result_copy)) {
+              $total_quantity += $row['quantity'];
+          }
+      }
+    ?>
+    <h4>Total Quantity: <span class="text-primary"><?php echo $total_quantity; ?></span> | Total Amount: <span class="text-danger"><?php echo number_format($total, 2); ?> </span></h4>
   </div>
 
   <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="orderForm" class="border p-4 rounded">

@@ -67,31 +67,36 @@
     </div>
   </div>
   <div class="container">
-    <div class="row" >
+    <div class="row">
       <?php
         if (mysqli_num_rows($result) > 0) {
           // Loop through products
           while ($row = mysqli_fetch_assoc($result)) {
             ?>
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-              <div  class="col-md-3 col-sm-6 col-6 m-auto py-3">
-                <div >
-                  <img src="admin/product_img/<?php echo $row['imgname']; ?>" >
+            <div class="col-md-3 col-sm-6 col-6 m-auto py-3">
+              <a href="product_detail.php?id=<?php echo $row['p_id']; ?>" class="text-decoration-none text-dark">
+                <div class="product-card">
+                  <div class="product-image">
+                    <img src="admin/product_img/<?php echo $row['imgname']; ?>" class="img-fluid" alt="<?php echo $row['name']; ?>">
+                  </div>
+                  <div class="product-info">
+                    <h6><?php echo $row["name"] ?></h6>
+                    <span class="price">$<?php echo $row["Price"] ?></span>
+                  </div>
                 </div>
-                <div>
-                  <h6><?php echo $row["name"] ?></h6>
-                  <span><?php echo $row["Price"] ?></span>
-                  <input type="hidden" name="product_id" value="<?php echo $row['p_id']; ?>">
-                  <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
-                  <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">
-
-                  <!-- Only show the 'Add to Cart' button if the user is logged in -->
-                  <?php if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1): ?>
-                    <input type="submit" class="btn btn-primary" value="Add to Cart" name="add_to_cart">
-                  <?php endif; ?>
-                </div>
-              </div>
-            </form>
+              </a>
+              
+              <!-- Quick add to cart form (optional) -->
+              <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="mt-2">
+                <input type="hidden" name="product_id" value="<?php echo $row['p_id']; ?>">
+                <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
+                <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">
+                
+                <?php if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1): ?>
+                  <input type="submit" class="btn btn-primary btn-sm" value="Quick Add" name="add_to_cart">
+                <?php endif; ?>
+              </form>
+            </div>
             <?php
           }
         } else {

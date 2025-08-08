@@ -53,23 +53,27 @@ if (isset($_POST['add_to_cart'])) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     ?>
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-                        <div class="col-md-3 col-sm-6 col-6">
-                            <div>
-                                <img src="admin/product_img/<?php echo $row['imgname']; ?>" alt="<?php echo $row['name']; ?>">
-                            </div>
-                            <div>
-                                <h6><?php echo $row["name"]; ?></h6>
-                                <span><?php echo number_format($row["Price"], 2); ?></span> <!-- Remove the dollar sign -->
-                                <input type="hidden" name="product_id" value="<?php echo $row['p_id']; ?>">
-                                <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
-                                <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">
+                    <div class="col-md-3 col-sm-6 col-6">
+                        <div class="product-item">
+                            <a href="product_detail.php?id=<?php echo $row['p_id']; ?>" class="product-link">
+                                <div class="product-image">
+                                    <img src="admin/product_img/<?php echo $row['imgname']; ?>" alt="<?php echo $row['name']; ?>">
+                                </div>
+                                <div class="product-info">
+                                    <h6><?php echo $row["name"]; ?></h6>
+                                    <span class="price"><?php echo number_format($row["Price"], 2); ?></span>
+                                </div>
+                            </a>
+                            <input type="hidden" name="product_id" value="<?php echo $row['p_id']; ?>">
+                            <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
+                            <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">
 
-                                <!-- Only show the 'Add to Cart' button if the user is logged in -->
-                                <?php if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1): ?>
-                                    <input type="submit" class="btn btn-primary" value="Add to Cart" name="add_to_cart">
-                                <?php endif; ?>
-                            </div>
+                            <!-- Only show the 'Add to Cart' button if the user is logged in -->
+                            <?php if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1): ?>
+                                <input type="submit" class="btn btn-primary" value="Add to Cart" name="add_to_cart">
+                            <?php endif; ?>
                         </div>
+                    </div>
                     </form>
                     <?php
                 }

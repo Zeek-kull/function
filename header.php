@@ -63,10 +63,23 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a class="nav-link" href="index.php">Fashion</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php">Fashion</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="Clothing.php">Clothing</a></li>
-                <li class="nav-item"><a class="nav-link" href="Trends.php"></a></li>
+                <?php
+                // Fetch distinct tags from the product table - always show all tags regardless of filters
+                $tags_sql = "SELECT DISTINCT tags FROM product WHERE tags != '' AND tags IS NOT NULL ORDER BY tags";
+                $tags_result = mysqli_query($conn, $tags_sql);
+                
+                if ($tags_result && mysqli_num_rows($tags_result) > 0) {
+                    while ($tag_row = mysqli_fetch_assoc($tags_result)) {
+                        $tag = $tag_row['tags'];
+                        // Handle display name transformation (Kid -> Kids)
+                        $display_name = ($tag == 'Kid') ? 'Kids' : $tag;
+                        echo '<li class="nav-item"><a class="nav-link" href="Others.php?tags=' . urlencode($tag) . '">' . htmlspecialchars($display_name) . '</a></li>';
+                    }
+                }
+                ?>
             </ul>
             <form class="form-inline my-2 my-lg-0" action="search.php" method="post">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="name">
@@ -99,7 +112,6 @@
 
 <!-- Optional Bootstrap JS -->
 <script src="js/jquery-3.6.0.min.js"></script>
-<script src="js/jquery-3.5.1.slim.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 </body>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2025 at 04:07 PM
+-- Generation Time: Aug 10, 2025 at 09:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,7 +67,10 @@ INSERT INTO `cart` (`c_id`, `userid`, `productid`, `name`, `quantity`, `price`) 
 (74, 0, 13, 'Shirt', 2, 400),
 (78, 0, 17, 'asdasd', 1, 1221),
 (79, 0, 0, 'New Shirt', 1, 600),
-(91, 12, 14, 'New Shirt', 1, 600);
+(91, 12, 14, 'New Shirt', 1, 600),
+(106, 9, 13, 'Shirt', 8, 400),
+(107, 9, 12, 'Tshirt', 1, 350),
+(108, 9, 17, 'asdasd', 1, 1221);
 
 -- --------------------------------------------------------
 
@@ -90,14 +93,6 @@ CREATE TABLE `orders` (
   `created_at` timestamp(6) NOT NULL DEFAULT current_timestamp(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `orders`
---
-
-INSERT INTO `orders` (`id`, `userid`, `name`, `address`, `phone`, `mobnumber`, `payment_method`, `txid`, `totalproduct`, `totalprice`, `status`, `created_at`) VALUES
-(34, 9, 'William Ken', '1329, Zone 6, Cansinala, Apalit, Pampanga', 0, '09270415710', 'PayPal', '', '12 (1)', 350, 'pending', '2025-07-30 07:19:58.000000'),
-(35, 9, 'William Ken', '1329, Zone 6, Cansinala, Apalit, Pampanga', 0, '09270415710', 'PayPal', '', '18 (2)', 426, 'pending', '2025-07-30 07:20:22.000000');
-
 -- --------------------------------------------------------
 
 --
@@ -107,8 +102,9 @@ INSERT INTO `orders` (`id`, `userid`, `name`, `address`, `phone`, `mobnumber`, `
 CREATE TABLE `product` (
   `p_id` int(100) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `catagory` varchar(100) NOT NULL,
+  `category` varchar(100) NOT NULL,
   `description` varchar(100) NOT NULL,
+  `tags` varchar(255) NOT NULL,
   `quantity` int(100) NOT NULL,
   `Price` int(100) NOT NULL,
   `imgname` varchar(100) NOT NULL
@@ -118,12 +114,10 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`p_id`, `name`, `catagory`, `description`, `quantity`, `Price`, `imgname`) VALUES
-(12, 'Tshirt', 'clothing', 'good', 8, 350, 'g3.png'),
-(13, 'Shirt', 'clothing', 'good', 23, 400, 'g2.png'),
-(14, 'New Shirt', 'clothing', 'good', 54, 600, 'g1.png'),
-(17, 'asdasd', 'asdad', 'asdasd', 1, 1221, 'men-s-running-t-shirt-red-decathlon-8771124.avif'),
-(18, 'asdasdasd', 'asdasd', 'asda', 20, 213, 'ethics.PNG');
+INSERT INTO `product` (`p_id`, `name`, `category`, `description`, `tags`, `quantity`, `Price`, `imgname`) VALUES
+(19, 'Tshirt', 'Cloth', 'SADASDAD', 'Women', 20, 200, 'g1.png'),
+(20, 'Shirt', 'Cloth', 'ASFASDJLAJDLJASLDJ', 'Men', 20, 100, 'g3.png'),
+(21, 'CShirt', 'Cloth', 'Red na medyo may white', 'Kid', 20, 300, 'g2.png');
 
 -- --------------------------------------------------------
 
@@ -201,19 +195,19 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `c_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `c_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `p_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `p_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `users`

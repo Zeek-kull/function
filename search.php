@@ -1,40 +1,16 @@
 <?php
  include'header.php';
  include'lib/connection.php';
- $name=$_POST['name'];
- $sql = "SELECT * FROM product where name='$name'  OR catagory='$name'";
- $result = $conn -> query ($sql);
- if(isset($_POST['add_to_cart'])){
-
-  if(isset($_SESSION['auth']))
-  {
-     if($_SESSION['auth']!=1)
-     {
-         header("location:login.php");
-     }
-  }
-  else
-  {
-     header("location:login.php");
-  }
-    $user_id=$_POST['user_id'];;
-    $product_name = $_POST['product_name'];
-    $product_price = $_POST['product_price'];
-    $product_id = $_POST['product_id'];
-    $product_quantity = 1;
-  
-    $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE productid = '$product_id'  && userid='$user_id'");
-  
-    if(mysqli_num_rows($select_cart) > 0){
-      echo $message[] = 'product already added to cart';
-    }
-    else{
-       $insert_product = mysqli_query($conn, "INSERT INTO `cart`(userid, productid, name, quantity, price) VALUES('$user_id', '$product_id', '$product_name', '$product_quantity', '$product_price')");
-     echo $message[] = 'product added to cart succesfully';
-     
-    }
-  
-  }
+ 
+ // Fix undefined array key warning
+ $name = isset($_POST['name']) ? $_POST['name'] : '';
+ 
+ if (!empty($name)) {
+     $sql = "SELECT * FROM product where name='$name'  OR category='$name'";
+     $result = $conn -> query ($sql);
+ } else {
+     $result = $conn -> query ("SELECT * FROM product LIMIT 0");
+ }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,9 +18,44 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Search Results</title>
     <link rel="stylesheet" href="admin/css/pending_orders.css">
-
+    <style>
+        .product-card {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            margin-bottom: 20px;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .product-info {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .product-info h6 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        .product-info span {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 14px;
+        }
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
@@ -57,35 +68,25 @@
             // output data of each row
             while($row = mysqli_fetch_assoc($result)) {
               ?>
-          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <div class="col-md-3 col-sm-6 col-6">
-              <div>
-                <img src="admin/product_img/<?php echo $row['imgname']; ?>"  width="" height="300" style="vertical-align:left" >
-                <!-- <img src="smiley.gif" alt="Smiley face" width="42" height="42" style="vertical-align:middle"> -->
-              </div>
-              <div>
-              <div>
-                <h6><?php echo $row["name"] ?></h6> 
-                <span><?php echo $row["Price"] ?></span> 
-                <input type="hidden" name="user_id" value="<?php echo $_SESSION['userid'];?>" >
-                <input type="hidden" name="product_id" value="<?php echo $row['id']; ?>"> 
-                <input type="hidden" name="product_name" value="<?php echo $row['name']; ?>">
-                <input type="hidden" name="product_price" value="<?php echo $row['Price']; ?>">              
-              </div>
-              <input type="submit" class="btn btn btn-primary" value="Add to Cart" name="add_to_cart">
-              </div>
-              
+              <a href="product_detail.php?id=<?php echo $row['p_id']; ?>" class="product-card">
+                <div>
+                  <img src="admin/product_img/<?php echo $row['imgname']; ?>" class="product-image" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                </div>
+                <div class="product-info">
+                  <h6><?php echo htmlspecialchars($row["name"]); ?></h6> 
+                  <span>$<?php echo number_format($row["Price"], 2); ?></span>
+                </div>
+              </a>
             </div>
-            </form>
             <?php 
-    }
+            }
         } 
-        else 
-            echo "0 results";
+        else {
+            echo "<div class='col-12'><p class='text-center'>No products found matching your search.</p></div>";
+        }
         ?>
-
-            
-          </div>
+   </div>
   </div>
 </div>
     

@@ -10,8 +10,8 @@ $name_error  = null;
 // Check if the registration form has been submitted
 if (isset($_POST['u_submit'])) {
     // Retrieve POST variables from the registration form
-    $f_name    = trim($_POST['u_name']);
-    $l_name    = trim($_POST['l_name']);
+    $f_name    = ucfirst(strtolower(trim($_POST['u_name'])));
+    $l_name    = ucfirst(strtolower(trim($_POST['l_name'])));
     $email     = trim($_POST['email']);
     $raw_pass  = $_POST['pass'];
     $raw_cpass = $_POST['c_pass'];
@@ -148,21 +148,21 @@ if (isset($_POST['u_submit'])) {
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <label for="fname">First Name</label>
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" name="u_name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed (no numbers or special characters)." required>
+                                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" name="u_name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed (no numbers or special characters)." required value="<?php echo isset($_POST['u_name']) ? htmlspecialchars(ucfirst(strtolower($_POST['u_name']))) : ''; ?>">
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="lname">Last Name</label>
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" name="l_name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed (no numbers or special characters)." required>
+                                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" name="l_name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed (no numbers or special characters)." required value="<?php echo isset($_POST['l_name']) ? htmlspecialchars(ucfirst(strtolower($_POST['l_name']))) : ''; ?>">
                                     </div>
                                 </div>
                                 <!-- Address fields -->
                                 <div class="form-group">
                                     <label for="street">Street Number/House Number</label>
-                                    <input type="text" class="form-control" id="street" name="street" required>
+                                    <input type="text" class="form-control" id="street" name="street" required value="<?php echo isset($_POST['street']) ? htmlspecialchars($_POST['street']) : ''; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="zone">Zone (optional)</label>
-                                    <input type="text" class="form-control" id="zone" name="zone">
+                                    <input type="text" class="form-control" id="zone" name="zone" value="<?php echo isset($_POST['zone']) ? htmlspecialchars($_POST['zone']) : ''; ?>">
                                 </div>
                                 <!-- Philippine Address Dropdowns START -->
                                 <div class="form-group">
@@ -189,12 +189,12 @@ if (isset($_POST['u_submit'])) {
                                 <!-- Email Field -->
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email" required>
+                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                                 </div>
                                 <!-- Phone Field -->
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" class="form-control form-control-user" id="phone" placeholder="09123456789" name="phone" pattern="[0-9]{11}" maxlength="11" required>
+                                    <input type="tel" class="form-control form-control-user" id="phone" placeholder="09123456789" name="phone" pattern="[0-9]{11}" maxlength="11" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
                                     <small class="form-text text-muted">Format: 09123456789 (11 digits starting with 09)</small>
                                 </div>
                                 <!-- Password Fields -->

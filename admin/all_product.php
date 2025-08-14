@@ -77,7 +77,7 @@ else
         <td><input type="text" name="update_category"  value="<?php echo $row['category']; ?>" ></td>
         <td><input type="text" name="update_tag"  value="<?php echo $row['tags']; ?>" ></td>
         <td><input type="number" name="update_quantity"  value="<?php echo $row['quantity']; ?>" ></td>
-        <td> <input type="number" name="update_Price" value="<?php echo $row['Price']; ?>" ></td>
+        <td> <input type="number" name="update_Price" value="<?php echo $row['price']; ?>" ></td>
         <td> <input type="submit" value="update" name="update_update_btn">
       </form></td>
       <td><a href="all_product.php?remove=<?php echo $row['p_id']; ?>">remove</a></td>

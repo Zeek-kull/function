@@ -54,7 +54,7 @@
                   </div>
                   <div class="product-info">
                     <h6><?php echo $row["name"] ?></h6>
-                    <span class="price">$<?php echo $row["Price"] ?></span>
+                    <span class="price">$<?php echo $row["price"] ?></span>
                   </div>
                 </div>
               </a>

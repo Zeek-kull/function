@@ -15,7 +15,7 @@
       $id = $_SESSION['userid'];
       
       // Run query only if $id is set
-      $sql = "SELECT * FROM cart WHERE userid='$id'";
+      $sql = "SELECT * FROM cart WHERE user_id='$id'";
       $result = $conn->query($sql);
   }
 

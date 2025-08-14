@@ -11,7 +11,7 @@ if (isset($_SESSION['auth'])) {
 
 include 'lib/connection.php';
 $k = $_SESSION['userid'];
-$sql = "SELECT * FROM orders WHERE userid='$k'";
+$sql = "SELECT * FROM orders WHERE user_id='$k' ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
 <!DOCTYPE html>

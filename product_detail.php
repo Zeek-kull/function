@@ -34,18 +34,18 @@
       $product_quantity = $_POST['quantity'];
 
       // Check if the product is already in the cart
-      $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE productid = '$product_id' AND userid = '$user_id'");
+      $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE product_id = '$product_id' AND user_id = '$user_id'");
       if (mysqli_num_rows($select_cart) > 0) {
         // Product exists, update quantity by adding new quantity
         $cart_item = mysqli_fetch_assoc($select_cart);
         $new_quantity = $cart_item['quantity'] + $product_quantity;
         
         // Update the existing cart item
-        $update_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$new_quantity' WHERE productid = '$product_id' AND userid = '$user_id'");
+        $update_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$new_quantity' WHERE product_id = '$product_id' AND user_id = '$user_id'");
         $message[] = 'Product quantity updated in cart';
       } else {
         // Product doesn't exist, insert new cart item
-        $insert_product = mysqli_query($conn, "INSERT INTO `cart`(userid, productid, name, quantity, price) VALUES('$user_id', '$product_id', '$product_name', '$product_quantity', '$product_price')");
+        $insert_product = mysqli_query($conn, "INSERT INTO `cart`(user_id, product_id, quantity, price) VALUES('$user_id', '$product_id', '$product_quantity', '$product_price')");
         $message[] = 'Product added to cart successfully';
       }
       header('Location: product_detail.php?id=' . $product_id);
@@ -66,13 +66,13 @@
     <div class="col-md-6">
       <h2><?php echo $product['name']; ?></h2>
       <p class="text-muted">Product ID: <?php echo $product['p_id']; ?></p>
-      <h3 class="text-primary">$<?php echo $product['Price']; ?></h3>
+      <h3 class="text-primary">$<?php echo $product['price']; ?></h3>
       <p><?php echo $product['description'] ?? 'No description available.'; ?></p>
       
       <form action="<?php echo $_SERVER['PHP_SELF'] . '?id=' . $product_id; ?>" method="post">
         <input type="hidden" name="product_id" value="<?php echo $product['p_id']; ?>">
         <input type="hidden" name="product_name" value="<?php echo $product['name']; ?>">
-        <input type="hidden" name="product_price" value="<?php echo $product['Price']; ?>">
+        <input type="hidden" name="product_price" value="<?php echo $product['price']; ?>">
         
         <div class="form-group">
           <label for="quantity">Quantity:</label>
@@ -109,7 +109,7 @@
           <img src="admin/product_img/<?php echo $related['imgname']; ?>" class="card-img-top" alt="<?php echo $related['name']; ?>">
           <div class="card-body">
             <h5 class="card-title"><?php echo $related['name']; ?></h5>
-            <p class="card-text">$<?php echo $related['Price']; ?></p>
+            <p class="card-text">$<?php echo $related['price']; ?></p>
           </div>
         </div>
       </a>

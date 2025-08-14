@@ -32,7 +32,7 @@
   }
   if (isset($_POST['order_btn'])) {
       // Check if cart is empty
-      $cart_check = mysqli_query($conn, "SELECT COUNT(*) as cart_count FROM cart WHERE userid = '{$_SESSION['userid']}'");
+      $cart_check = mysqli_query($conn, "SELECT COUNT(*) as cart_count FROM cart WHERE user_id = '{$_SESSION['userid']}'");
       $cart_count = mysqli_fetch_assoc($cart_check)['cart_count'];
       
       if ($cart_count == 0) {
@@ -43,26 +43,26 @@
       
       $userid = $_POST['user_id'];
       $name = $_POST['user_name'];
-      $number = $_POST['number'];
+      $number = $_POST['mobnumber'];
       $address = $_POST['address'];
-      $mobnumber = isset($_POST['mobnumber']) ? $_POST['mobnumber'] : '';
+      $mobnumber = $_POST['mobnumber'];
       $payment_method = $_POST['payment_method']; // User-selected payment method
       $status = "pending";
       $order_date = date('Y-m-d H:i:s'); // Current date and time
 
-      $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE userid='$userid'");
+      $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id='$userid'");
       $price_total = 0;
       $product_name = [];
 
       // Calculate total price and update stock
       if (mysqli_num_rows($cart_query) > 0) {
           while ($product_item = mysqli_fetch_assoc($cart_query)) {
-              $product_name[] = $product_item['productid'] . ' (' . $product_item['quantity'] . ')';
-              $product_price = number_format($product_item['price'] * $product_item['quantity']);
+              $product_name[] = $product_item['product_id'] . ' (' . $product_item['quantity'] . ')';
+              $product_price = $product_item['price'] * $product_item['quantity'];
               $price_total += $product_price;
 
               // Update product stock
-              $sql = "SELECT * FROM product WHERE p_id = '{$product_item['productid']}'";
+              $sql = "SELECT * FROM product WHERE p_id = '{$product_item['product_id']}'";
               $result = $conn->query($sql);
               if (mysqli_num_rows($result) > 0) {
                   while ($row = mysqli_fetch_assoc($result)) {
@@ -79,11 +79,11 @@
           // Insert order if products are available
           $total_product = implode(', ', $product_name);
           // Use only the correct column 'created_at' for the order date
-          $detail_query = mysqli_query($conn, "INSERT INTO `orders`(userid, name, address, phone, mobnumber, payment_method, totalproduct, totalprice, status, created_at) 
+          $detail_query = mysqli_query($conn, "INSERT INTO `orders`(user_id, name, address, phone, mobnumber, payment_method, totalproduct, totalprice, status, created_at) 
               VALUES('$userid','$name','$address','$number','$mobnumber','$payment_method','$total_product','$price_total','$status', '$order_date')");
 
           // Empty cart after successful order
-          $cart_query1 = mysqli_query($conn, "DELETE FROM `cart` WHERE userid='$userid'");
+          $cart_query1 = mysqli_query($conn, "DELETE FROM `cart` WHERE user_id='$userid'");
           header("location:index.php");
           exit();
       }
@@ -91,10 +91,11 @@
 
   // Get user's cart with product images
   $id = $_SESSION['userid'];
-  $sql = "SELECT cart.*, product.imgname 
+  $sql = "SELECT cart.*, product.imgname, product.name as product_name
           FROM cart 
-          LEFT JOIN product ON cart.productid = product.p_id 
-          WHERE cart.userid='$id'";
+          LEFT JOIN product ON cart.product_id = product.p_id 
+          WHERE cart.user_id='$id'
+          ORDER BY created_at DESC" ;
   $result = $conn->query($sql);
 
   // Update cart quantity
@@ -139,12 +140,12 @@
       <tr>
         <td>
           <?php if (!empty($row['imgname'])): ?>
-            <img src="admin/product_img/<?php echo $row['imgname']; ?>" alt="<?php echo $row["name"]; ?>" class="cart-product-image">
+            <img src="admin/product_img/<?php echo $row['imgname']; ?>" alt="<?php echo $row["product_name"]; ?>" class="cart-product-image">
           <?php else: ?>
             <img src="img/no-image.png" alt="No Image" class="cart-product-image">
           <?php endif; ?>
         </td>
-        <td><?php echo $row["name"]; ?></td>
+        <td><?php echo $row["product_name"]; ?></td>
         <td>
           <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <input type="hidden" name="update_quantity_id" value="<?php echo $row['c_id']; ?>">

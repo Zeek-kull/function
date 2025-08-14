@@ -75,7 +75,7 @@
                 </div>
                 <div class="product-info">
                   <h6><?php echo htmlspecialchars($row["name"]); ?></h6> 
-                  <span>$<?php echo number_format($row["Price"], 2); ?></span>
+                  <span>$<?php echo number_format($row["price"], 2); ?></span>
                 </div>
               </a>
             </div>

@@ -28,7 +28,7 @@ if (mysqli_num_rows($result) > 0) {
                     </div>
                     <div class="product-info">
                         <h6><?php echo $row["name"]; ?></h6>
-                        <span class="price"><?php echo number_format($row["Price"], 2); ?></span>
+                        <span class="price"><?php echo number_format($row["price"], 2); ?></span>
                         <small class="text-muted d-block"><?php echo $row["category"]; ?></small>
                     </div>
                 </a>
